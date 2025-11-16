@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Tarefas</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto 25px auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .card form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Lista de tarefas */
+        .task {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 10px auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .task-desc {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .task-status {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .task-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .task-actions form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Minhas Tarefas</h1>
+
+
+    <div class="card">
+        <h2>Adicionar Nova Tarefa</h2>
+
+        <form action="/tarefas" method="post">
+            <input type="text" name="titulo" placeholder="Título da tarefa" required>
+
+            <input type="text" name="descricao" placeholder="Descrição da tarefa" required>
+
+            <select name="situacao">
+                <option value="Pendente">Pendente</option>
+                <option value="Concluída">Concluída</option>
+            </select>
+
+            <button class="btn-add" type="submit">Adicionar</button>
+        </form>
+    </div>
+
+    <hr style="max-width:600px; margin:30px auto;">
+
+    {% for id, titulo, descricao, situacao in tarefas %}
+    <div class="task">
+        <div class="task-title">{{ titulo }}</div>
+        <div class="task-desc">{{ descricao }}</div>
+        <div class="task-status">Status: <strong>{{ situacao }}</strong></div>
+
+        <div class="task-actions">
+
+            <form action="/editar" method="post">
+                <input type="hidden" name="id" value="{{ id }}">
+                <input type="text" name="descricao" placeholder="Nova descrição" required>
+                <button class="btn-edit" type="submit">Editar</button>
+            </form>
+
+            <form action="/deletar" method="post">
+                <input type="hidden" name="id" value="{{ id }}">
+                <button class="btn-delete" type="submit">Excluir</button>
+            </form>
+
+        </div>
+    </div>
+    {% end %}
+
+</body>
+</html>
+
