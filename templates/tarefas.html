@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Tarefas</title>
+   <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+</head>
+<body>
+
+<h1 style="text-align:center;">Minhas Tarefas</h1>
+
+<div class="card" style="max-width:600px; margin:auto;">
+    <h2>Adicionar Nova Tarefa</h2>
+
+    <form action="/tarefas" method="post">
+        <input type="text" name="titulo" placeholder="Título" required>
+        <input type="text" name="descricao" placeholder="Descrição" required>
+
+        <select name="id_categoria">
+            <option value="1">Trabalho</option>
+            <option value="2">Estudos</option>
+            <option value="3">Pessoal</option>
+        </select>
+
+        <select name="id_status">
+            <option value="1">Pendente</option>
+            <option value="2">Em Andamento</option>
+            <option value="3">Concluída</option>
+        </select>
+
+        <button class="btn-add" type="submit">Adicionar</button>
+    </form>
+</div>
+
+{% for id, titulo, descricao, categoria, situacao in tarefas %}
+<div class="task">
+    <div class="task-title">{{ titulo }} <span style="font-size: 0.8em; color: #666;">({{ categoria }})</span></div>
+    <div>{{ descricao }}</div>
+    <div>Status: <strong>{{ situacao }}</strong></div>
+
+    <div class="task-actions">
+
+        <form action="/editar" method="post" style="margin-top:10px;">
+            <input type="hidden" name="id" value="{{ id }}">
+            <input type="text" name="descricao" placeholder="Nova descrição" required>
+            <button class="btn-edit">Editar</button>
+        </form>
+
+        <form action="/deletar" method="post" style="margin-top:10px;">
+            <input type="hidden" name="id" value="{{ id }}">
+            <button class="btn-delete">Excluir</button>
+        </form>
+
+    </div>
+</div>
+{% end %}
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+</head>
+<body>
+
+<div class="center">
+    <div class="login-card">
+        <h1>Login</h1>
+
+        <form action="/" method="post">
+            <label>Usuário:</label>
+            <input type="text" name="usuario" required>
+
+            <label>Senha:</label>
+            <input type="password" name="senha" required>
+
+            <button class="btn-edit" type="submit">Entrar</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
