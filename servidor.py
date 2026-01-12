@@ -86,6 +86,6 @@ def make_app():
 
 
 if __name__ == "__main__":
-    make_app().listen(8000)
-    print("Servidor em http://localhost:8000")
+    make_app().listen(8001)
+    print("Servidor em http://localhost:8001")
     tornado.ioloop.IOLoop.current().start()

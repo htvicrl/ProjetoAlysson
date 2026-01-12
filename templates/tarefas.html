@@ -7,67 +7,78 @@
 </head>
 <body>
 
-<a href="/relatorios" class="btn-add" style="text-decoration:none; display:inline-block; width:auto; margin-bottom:10px;">Ver Logs e Views (Admin)</a>
-<h1 style="text-align:center;">Gerenciador de Tarefas</h1>
+<div style="max-width:800px; margin:auto; padding: 20px;">
 
-<div class="card" style="max-width:600px; margin:auto;">
-    <h2>Nova Tarefa</h2>
-    <form action="/tarefas" method="post">
-        <input type="text" name="titulo" placeholder="Título" required>
-        <input type="text" name="descricao" placeholder="Descrição" required>
-
-        <label>Categoria:</label>
-        <select name="id_categoria">
-            <option value="1">Trabalho</option>
-            <option value="2">Estudos</option>
-            <option value="3">Pessoal</option>
-        </select>
-
-        <label>Status Inicial:</label>
-        <select name="id_status">
-            <option value="1">Pendente</option>
-            <option value="2">Em Andamento</option>
-        </select>
-
-        <button class="btn-add" type="submit">Adicionar Tarefa</button>
-    </form>
-</div>
-
-<div class="task {% if situacao == 'Concluída' %}task-done{% end %}">
-    <div class="task-title">
-        {{ titulo }}
-        <span>{{ categoria }}</span>
-    </div>
-    <p>{{ descricao }}</p>
-
-    <span class="status-badge
-        {% if situacao == 'Pendente' %}status-pendente
-        {% elif situacao == 'Em Andamento' %}status-andamento
-        {% else %}status-concluida{% end %}">
-        {{ situacao }}
-    </span>
-
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 style="margin: 0;">Gerenciador de Tarefas</h1>
+        <a href="/relatorios" class="btn-add" style="text-decoration:none; width:auto; padding: 10px 20px;">Ver Logs e Views (Admin)</a>
     </div>
 
-        <div class="task-actions">
-            <form action="/editar" method="post" style="display:inline-block; width: 70%;">
-                <input type="hidden" name="id" value="{{ id }}">
-                <input type="text" name="descricao" value="{{ descricao }}" style="width:40%; display:inline;">
-                <select name="id_status" style="width:30%; display:inline;">
-                    <option value="1" {% if situacao == 'Pendente' %}selected{% end %}>Pendente</option>
-                    <option value="2" {% if situacao == 'Em Andamento' %}selected{% end %}>Em Andamento</option>
-                    <option value="3" {% if situacao == 'Concluída' %}selected{% end %}>Concluída</option>
-                </select>
-                <button class="btn-edit">Salvar</button>
-            </form>
+    <div class="card" style="margin-top: 20px;">
+        <h2>Nova Tarefa</h2>
+        <form action="/tarefas" method="post">
+            <input type="text" name="titulo" placeholder="Título" required>
+            <input type="text" name="descricao" placeholder="Descrição" required>
 
-            <form action="/deletar" method="post" style="display:inline;">
-                <input type="hidden" name="id" value="{{ id }}">
-                <button class="btn-delete" onclick="return confirm('Excluir?')">X</button>
-            </form>
+            <label>Categoria:</label>
+            <select name="id_categoria">
+                <option value="1">Trabalho</option>
+                <option value="2">Estudos</option>
+                <option value="3">Pessoal</option>
+            </select>
+
+            <label>Status Inicial:</label>
+            <select name="id_status">
+                <option value="1">Pendente</option>
+                <option value="2">Em Andamento</option>
+            </select>
+
+            <button class="btn-add" type="submit">Adicionar Tarefa</button>
+        </form>
+    </div>
+
+    <hr style="margin: 40px 0; border: 0; border-top: 1px solid #ddd;">
+
+    <div id="lista-tarefas">
+        {% for id, titulo, descricao, categoria, situacao in tarefas %}
+        <div class="task {% if situacao == 'Concluída' %}task-done{% end %}">
+
+            <div class="task-title">
+                {{ titulo }}
+                <span>{{ categoria }}</span>
+            </div>
+
+            <p>{{ descricao }}</p>
+
+            <span class="status-badge
+                {% if situacao == 'Pendente' %}status-pendente
+                {% elif situacao == 'Em Andamento' %}status-andamento
+                {% else %}status-concluida{% end %}">
+                {{ situacao }}
+            </span>
+
+            <div class="task-actions" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <form action="/editar" method="post" style="display:inline-block; width: 85%;">
+                    <input type="hidden" name="id" value="{{ id }}">
+                    <input type="text" name="descricao" value="{{ descricao }}" style="width:45%; display:inline; margin:0;">
+
+                    <select name="id_status" style="width:30%; display:inline; margin:0;">
+                        <option value="1" {% if situacao == 'Pendente' %}selected{% end %}>Pendente</option>
+                        <option value="2" {% if situacao == 'Em Andamento' %}selected{% end %}>Em Andamento</option>
+                        <option value="3" {% if situacao == 'Concluída' %}selected{% end %}>Concluída</option>
+                    </select>
+
+                    <button class="btn-edit" style="width:18%;">Salvar</button>
+                </form>
+
+                <form action="/deletar" method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="{{ id }}">
+                    <button class="btn-delete" onclick="return confirm('Excluir?')">X</button>
+                </form>
+            </div>
         </div>
+        {% end %}
     </div>
-    {% end %}
 </div>
 
 </body>
