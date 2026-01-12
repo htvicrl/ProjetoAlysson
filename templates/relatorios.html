@@ -38,5 +38,58 @@
             {% end %}
         </ul>
     </div>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Auditoria de Banco de Dados</title>
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+</head>
+<body>
+    <div style="max-width: 900px; margin: auto;">
+        <h1 style="text-align:center;">Painel de SQL Avançado</h1>
+        <p style="text-align:center;"><a href="/tarefas">← Voltar para o Dashboard</a></p>
+
+        <div class="card" style="background: #2b2d42; color: #fff;">
+            <h2 style="color: #4361ee; text-align: left;">📄 Definições SQL (Views e Triggers)</h2>
+            <p>Abaixo estão os comandos SQL executados no banco de dados para este projeto:</p>
+
+            <h3 style="color: #2ec4b6;">1. Criação da View Consolidada</h3>
+            <pre style="background: #1a1c2c; padding: 15px; border-radius: 8px; overflow-x: auto;">
+<code>CREATE VIEW vw_detalhes_tarefas AS
+SELECT
+    t.id_tarefa, t.titulo, t.descricao,
+    c.nome AS categoria, s.descricao AS status_atual,
+    u.nome AS dono_da_tarefa
+FROM tarefas t
+JOIN usuario u ON t.id_usuario = u.id_usuario
+JOIN categorias c ON t.id_categoria = c.id
+JOIN status_tarefa s ON t.id_status = s.id;</code></pre>
+
+            <h3 style="color: #2ec4b6;">2. Exemplo de Trigger (Auditoria de Insert)</h3>
+            <pre style="background: #1a1c2c; padding: 15px; border-radius: 8px; overflow-x: auto;">
+<code>CREATE TRIGGER trg_log_insert AFTER INSERT ON tarefas
+BEGIN
+    INSERT INTO logs_tarefas (tarefa_id, acao)
+    VALUES (NEW.id_tarefa, 'CRIOU: ' || NEW.titulo);
+END;</code></pre>
+        </div>
+
+        <br>
+
+        <div class="card">
+            <h2>🕒 Logs Gerados em Tempo Real (Triggers)</h2>
+            <div class="log-container">
+                {% for id_log, id_tarefa, acao, data in logs %}
+                <div class="log-item">
+                    <span class="log-date">{{ data }}</span>
+                    <span><strong>ID Tarefa #{{ id_tarefa }}:</strong> {{ acao }}</span>
+                </div>
+                {% end %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
 </body>
 </html>

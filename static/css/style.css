@@ -12,6 +12,23 @@
     --text-main: #2b2d42;
     --text-muted: #8d99ae;
 }
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #a5d6ff; /* Azul claro estilo VS Code */
+    border: 1px solid #3e4451;
+}
+
+code {
+    display: block;
+    white-space: pre-wrap;
+}
+
+.log-container {
+    max-height: 400px;
+    overflow-y: auto; /* Adiciona scroll se tiver muitos logs */
+}
 
 body {
     font-family: 'Inter', sans-serif;
