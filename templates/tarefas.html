@@ -3,57 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <title>Minhas Tarefas</title>
-   <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
 </head>
 <body>
 
-<h1 style="text-align:center;">Minhas Tarefas</h1>
+<a href="/relatorios" class="btn-add" style="text-decoration:none; display:inline-block; width:auto; margin-bottom:10px;">Ver Logs e Views (Admin)</a>
+<h1 style="text-align:center;">Gerenciador de Tarefas</h1>
 
 <div class="card" style="max-width:600px; margin:auto;">
-    <h2>Adicionar Nova Tarefa</h2>
-
+    <h2>Nova Tarefa</h2>
     <form action="/tarefas" method="post">
         <input type="text" name="titulo" placeholder="Título" required>
         <input type="text" name="descricao" placeholder="Descrição" required>
 
+        <label>Categoria:</label>
         <select name="id_categoria">
             <option value="1">Trabalho</option>
             <option value="2">Estudos</option>
             <option value="3">Pessoal</option>
         </select>
 
+        <label>Status Inicial:</label>
         <select name="id_status">
             <option value="1">Pendente</option>
             <option value="2">Em Andamento</option>
-            <option value="3">Concluída</option>
         </select>
 
-        <button class="btn-add" type="submit">Adicionar</button>
+        <button class="btn-add" type="submit">Adicionar Tarefa</button>
     </form>
 </div>
 
-{% for id, titulo, descricao, categoria, situacao in tarefas %}
-<div class="task">
-    <div class="task-title">{{ titulo }} <span style="font-size: 0.8em; color: #666;">({{ categoria }})</span></div>
-    <div>{{ descricao }}</div>
-    <div>Status: <strong>{{ situacao }}</strong></div>
+<div class="task {% if situacao == 'Concluída' %}task-done{% end %}">
+    <div class="task-title">
+        {{ titulo }}
+        <span>{{ categoria }}</span>
+    </div>
+    <p>{{ descricao }}</p>
 
-    <div class="task-actions">
-
-        <form action="/editar" method="post" style="margin-top:10px;">
-            <input type="hidden" name="id" value="{{ id }}">
-            <input type="text" name="descricao" placeholder="Nova descrição" required>
-            <button class="btn-edit">Editar</button>
-        </form>
-
-        <form action="/deletar" method="post" style="margin-top:10px;">
-            <input type="hidden" name="id" value="{{ id }}">
-            <button class="btn-delete">Excluir</button>
-        </form>
+    <span class="status-badge
+        {% if situacao == 'Pendente' %}status-pendente
+        {% elif situacao == 'Em Andamento' %}status-andamento
+        {% else %}status-concluida{% end %}">
+        {{ situacao }}
+    </span>
 
     </div>
+
+        <div class="task-actions">
+            <form action="/editar" method="post" style="display:inline-block; width: 70%;">
+                <input type="hidden" name="id" value="{{ id }}">
+                <input type="text" name="descricao" value="{{ descricao }}" style="width:40%; display:inline;">
+                <select name="id_status" style="width:30%; display:inline;">
+                    <option value="1" {% if situacao == 'Pendente' %}selected{% end %}>Pendente</option>
+                    <option value="2" {% if situacao == 'Em Andamento' %}selected{% end %}>Em Andamento</option>
+                    <option value="3" {% if situacao == 'Concluída' %}selected{% end %}>Concluída</option>
+                </select>
+                <button class="btn-edit">Salvar</button>
+            </form>
+
+            <form action="/deletar" method="post" style="display:inline;">
+                <input type="hidden" name="id" value="{{ id }}">
+                <button class="btn-delete" onclick="return confirm('Excluir?')">X</button>
+            </form>
+        </div>
+    </div>
+    {% end %}
 </div>
-{% end %}
 
 </body>
 </html>

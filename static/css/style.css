@@ -1,51 +1,168 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
+/* Importando uma fonte moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+:root {
+    --bg-body: #f0f2f5;
+    --bg-card: #ffffff;
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --success: #2ec4b6;
+    --warning: #ff9f1c;
+    --danger: #e71d36;
+    --text-main: #2b2d42;
+    --text-muted: #8d99ae;
 }
 
-/* Cards */
-.welcome-card, .login-card, .card, .task {
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+h1, h2 {
+    font-weight: 600;
+    text-align: center;
+    color: var(--primary);
+}
+
+/* Container do Formulário */
+.card {
+    background: var(--bg-card);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Inputs e Selects */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #edf2f4;
+    border-radius: 8px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+    outline: none;
     background: #fff;
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+}
+
+/* Estilo dos Cards de Tarefa */
+.task {
+    background: var(--bg-card);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    margin-bottom: 20px;
+    border-left: 6px solid var(--primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
 }
 
-/* Centralização */
-.center {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Botões */
-button, a.btn {
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-}
-
-.btn-add { background: #28a745; }
-.btn-edit { background: #007bff; }
-.btn-delete { background: #dc3545; }
-
-button:hover, a.btn:hover {
-    opacity: 0.9;
-}
-
-/* Tarefas */
-.task {
-    max-width: 600px;
-    margin: 10px auto;
+.task:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
 .task-title {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
 }
+
+.task-title span {
+    font-size: 0.7em;
+    background: #edf2f4;
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: var(--text-muted);
+}
+
+/* Cores por Status */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pendente { background: #fff3cd; color: #856404; }
+.status-andamento { background: #cce5ff; color: #004085; }
+.status-concluida { background: #d4edda; color: #155724; }
+
+.task-done {
+    border-left-color: var(--success);
+    background-color: #fbfbfb;
+}
+
+.task-done .task-title {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Botões */
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-add {
+    background: var(--primary);
+    color: white;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.btn-add:hover { background: var(--secondary); transform: scale(1.01); }
+
+.btn-edit { background: var(--warning); color: #fff; }
+.btn-delete { background: var(--danger); color: #fff; }
+
+/* Tabela de Relatórios (View) */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.report-table th {
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.report-table td {
+    padding: 12px;
+    border-bottom: 1px solid #edf2f4;
+}
+
+/* Estilo para a lista de Logs */
+.log-item {
+    padding: 12px;
+    border-bottom: 1px solid #edf2f4;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.log-date { color: var(--text-muted); font-family: monospace; }

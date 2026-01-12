@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Controle - SQL</title>
+    <link rel="stylesheet" href="{{ static_url('css/style.css') }}">
+</head>
+<body>
+    <nav style="text-align: center; margin-bottom: 20px;">
+        <a href="/tarefas">Voltar para Tarefas</a>
+    </nav>
+
+    <h1 style="text-align:center;">Painel de Auditoria (SQL Avançado)</h1>
+
+    <div class="card">
+        <h2>1. Dados da VIEW (vw_detalhes_tarefas)</h2>
+        <p><small>Esta tabela abaixo não existe fisicamente, ela é uma VIEW que une Usuario, Tarefas, Categorias e Status.</small></p>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #eee;">
+                <th>ID</th><th>Título</th><th>Categoria</th><th>Status</th><th>Dono</th>
+            </tr>
+            {% for id, titulo, desc, cat, status, dono in tarefas_view %}
+            <tr>
+                <td>{{ id }}</td><td>{{ titulo }}</td><td>{{ cat }}</td><td>{{ status }}</td><td>{{ dono }}</td>
+            </tr>
+            {% end %}
+        </table>
+    </div>
+
+    <div class="card" style="margin-top: 30px;">
+        <h2>2. Logs de Auditoria (Gerados por TRIGGERS)</h2>
+        <p><small>Sempre que você Criar, Editar ou Deletar, um Trigger insere uma linha aqui automaticamente.</small></p>
+        <ul style="list-style: none; padding: 0;">
+            {% for id_log, id_tarefa, acao, data in logs %}
+            <li style="padding: 10px; border-bottom: 1px solid #ddd;">
+                <strong>[{{ data }}]</strong> - Tarefa #{{ id_tarefa }}: {{ acao }}
+            </li>
+            {% end %}
+        </ul>
+    </div>
+</body>
+</html>

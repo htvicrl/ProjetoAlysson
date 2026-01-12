@@ -1,4 +1,3 @@
-
 import tornado.ioloop
 import tornado.web
 import sqlite3
@@ -6,7 +5,7 @@ import sqlite3
 
 def conexao_db(query, valores=()):
     conexao = sqlite3.connect("db/db.sqlite3")
-    conexao.execute("PRAGMA foreign_keys = ON;")
+    conexao.execute("PRAGMA foreign_keys = ON;")  # Ativa chaves estrangeiras
     cursor = conexao.cursor()
     cursor.execute(query, valores)
     resultado = cursor.fetchall()
@@ -20,78 +19,60 @@ class Login(tornado.web.RequestHandler):
         self.render("login.html")
 
     def post(self):
-        usuario = self.get_argument("usuario")
-        senha = self.get_argument("senha")
-
-        query = "SELECT id_usuario FROM usuario WHERE nome=? AND senha=?"
-        valores = (usuario, senha)
-        resultado = conexao_db(query, valores)
-
-        if resultado:
-            id_usuario = resultado[0][0]
-            self.set_secure_cookie("id_usuario", str(id_usuario))
+        usuario, senha = self.get_argument("usuario"), self.get_argument("senha")
+        res = conexao_db("SELECT id_usuario FROM usuario WHERE nome=? AND senha=?", (usuario, senha))
+        if res:
+            self.set_secure_cookie("id_usuario", str(res[0][0]))
             self.redirect("/tarefas")
         else:
-            self.write("Usuário ou senha não encontrados.")
+            self.write("Erro no login.")
+
 
 class Tarefas(tornado.web.RequestHandler):
     def get(self):
-        id_usuario = self.get_secure_cookie("id_usuario")
-        if not id_usuario:
-                self.redirect("/")
-                return
+        id_user = self.get_secure_cookie("id_usuario")
+        if not id_user: return self.redirect("/")
 
-        id_usuario = id_usuario.decode()
-
-        query = """
-                SELECT id_tarefa, titulo, descricao, categoria, status_atual 
-                FROM vw_detalhes_tarefas 
-                WHERE dono_da_tarefa = (SELECT nome FROM usuario WHERE id_usuario=?)
-            """
-        valores = (id_usuario,)
-        tarefas = conexao_db(query, valores)
-
+        # Busca da VIEW filtrando pelo ID do usuário (subquery)
+        query = """SELECT id_tarefa, titulo, descricao, categoria, status_atual 
+                   FROM vw_detalhes_tarefas 
+                   WHERE dono_da_tarefa = (SELECT nome FROM usuario WHERE id_usuario=?)"""
+        tarefas = conexao_db(query, (id_user.decode(),))
         self.render("tarefas.html", tarefas=tarefas)
 
     def post(self):
-        id_usuario = self.get_secure_cookie("id_usuario").decode()
-        titulo = self.get_argument("titulo")
-        descricao = self.get_argument("descricao")
-        id_categoria = self.get_argument("id_categoria")
-        id_status = self.get_argument("id_status")
+        id_user = self.get_secure_cookie("id_usuario").decode()
+        dados = (self.get_argument("titulo"), self.get_argument("descricao"),
+                 id_user, self.get_argument("id_categoria"), self.get_argument("id_status"))
 
-        query = """
-            INSERT INTO tarefas (id_usuario, titulo, descricao, id_categoria, id_status)
-            VALUES (?, ?, ?, ?, ?)
-        """
-        valores = (id_usuario, titulo, descricao, id_categoria, id_status)
-        conexao_db(query, valores)
-
+        query = "INSERT INTO tarefas (titulo, descricao, id_usuario, id_categoria, id_status) VALUES (?,?,?,?,?)"
+        conexao_db(query, dados)
         self.redirect("/tarefas")
 
 
 class EditarTarefa(tornado.web.RequestHandler):
     def post(self):
-        id_tarefa = self.get_argument("id")
-        nova_descricao = self.get_argument("descricao")
-
-        query = "UPDATE tarefas SET descricao=? WHERE id_tarefa=?"
-        valores = (nova_descricao, id_tarefa)
-        conexao_db(query, valores)
-
+        dados = (self.get_argument("descricao"), self.get_argument("id_status"), self.get_argument("id"))
+        conexao_db("UPDATE tarefas SET descricao=?, id_status=? WHERE id_tarefa=?", dados)
         self.redirect("/tarefas")
 
 
 class DeletarTarefa(tornado.web.RequestHandler):
     def post(self):
-        id_tarefa = self.get_argument("id")
-
-        query = "DELETE FROM tarefas WHERE id_tarefa=?"
-        valores = (id_tarefa,)
-        conexao_db(query, valores)
-
+        conexao_db("DELETE FROM tarefas WHERE id_tarefa=?", (self.get_argument("id"),))
         self.redirect("/tarefas")
 
+class AdminRelatorios(tornado.web.RequestHandler):
+    def get(self):
+        # 1. Busca dados da VIEW (Relacionamento de todas as tabelas)
+        query_view = "SELECT * FROM vw_detalhes_tarefas"
+        dados_view = conexao_db(query_view)
+
+        # 2. Busca dados dos LOGS (Gerados pelos Triggers)
+        query_logs = "SELECT * FROM logs_tarefas ORDER BY data_log DESC"
+        dados_logs = conexao_db(query_logs)
+
+        self.render("relatorios.html", tarefas_view=dados_view, logs=dados_logs)
 
 
 def make_app():
@@ -100,16 +81,11 @@ def make_app():
         (r"/tarefas", Tarefas),
         (r"/editar", EditarTarefa),
         (r"/deletar", DeletarTarefa),
-    ],
-        template_path="templates",
-        static_path="static",
-        cookie_secret="seguranca"
-    )
+        (r"/relatorios", AdminRelatorios),
+    ], template_path="templates", static_path="static", cookie_secret="seguranca")
 
 
 if __name__ == "__main__":
-    app = make_app()
-    app.listen(8888)
-    print("Servidor rodando em: http://localhost:8888")
+    make_app().listen(8000)
+    print("Servidor em http://localhost:8000")
     tornado.ioloop.IOLoop.current().start()
-
