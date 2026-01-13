@@ -12,11 +12,34 @@
     --text-main: #2b2d42;
     --text-muted: #8d99ae;
 }
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+}
+
+
+.login-card {
+    background: white;
+    justify-content: center;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+}
 pre {
     font-family: 'Courier New', Courier, monospace;
     font-size: 13px;
     line-height: 1.5;
-    color: #a5d6ff; /* Azul claro estilo VS Code */
+    color: #a5d6ff;
     border: 1px solid #3e4451;
 }
 
